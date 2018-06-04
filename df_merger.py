@@ -6,31 +6,21 @@ import pandas as pd
 
 def create_spreadsheet_entry(
 	article_id,
-	#sentence,
 	token,
 	index,
-	#n_chunk,
-	#pos,
 	tag,
 	dep,
 	g1,
 	g2,
 	g3
-	#c_w
-	#shape,
 	):
 #enters data into csv entry (row) format preprocessor
 	result = [[
 		article_id,
-		#sentence,
 		token,
 		index,
-		#n_chunk,
-		#pos,
 		tag,
 		dep,
-		#c_w,
-		#shape
 		g1,
 		g2,
 		g3
@@ -48,8 +38,6 @@ def put_values_in_spreadsheet(entry_list, data_frame):
 		entry_list[5],
 		entry_list[6],
 		entry_list[7]
-		#entry_list[8],
-		#entry_list[9]
 		),ignore_index=True)
 	return data_frame
 
@@ -68,15 +56,13 @@ def new_row_write(i,row_offset,data_frame):
 	new_row.append(
 	data_df.iloc[i,8])
 
-	data_frame = put_values_in_spreadsheet(new_row, data_frame)
-	return data_frame
+	return put_values_in_spreadsheet(new_row, data_frame)
 
 
 #####################################################################3
 #main recursive
 def matcher(matches,shift,row_offset,tok_data,tok_new,i):
 	if matches == 3:
-		print(type(new_row_write(i,row_offset,data_frame)),'newrow return')
 		return row_offset, new_row_write(i,row_offset,data_frame)
 	elif shift == 3:
 		row_offset +=1
@@ -97,25 +83,20 @@ def matcher(matches,shift,row_offset,tok_data,tok_new,i):
 #variables
 columns = [
 	'Article',
-	#'Sentence',
 	'Token',
 	'index',
-	#'Noun chunks',
-	#'POS',
 	'TAG',
 	'Dependency@connection',
-	#'Connected word',
-	#'Shape',
 	'Group1',
 	'Group2',
 	'Group3'
 ]
 data_frame = pd.DataFrame(columns = list(columns))
 row_offset = 0
-has_data = 'Export.tsv'
+has_data = 'file_with_data.tsv'
 #shorter
 data_df = pd.read_csv(has_data, sep = '\t')
-new_data = 'model1_input.tsv'
+new_data = 'file_to_merge.tsv'
 #longer
 new_file = pd.read_csv(new_data, sep = '\t')
 
@@ -128,13 +109,6 @@ for i in range(len(data_df)):
 	tok_data = data_df.iloc[i,2].split(' ')
 	tok_new = new_file.iloc[i+row_offset,2].split(' ')
 	matches = 0
-	print (type(data_frame),type(row_offset))
-	print ('$$$$$$$$$$$$$$$$$$$$4')
 	row_offset, data_frame = matcher(matches,shift,row_offset,tok_data,tok_new,i)
-	print(i,'This is i')
-	print(row_offset,'this is offset')
-	print('################3')
-	print(type(data_frame),'dataframe being returned')
-
 
 data_frame.to_csv('merged.tsv',sep='\t')
